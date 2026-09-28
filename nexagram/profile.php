@@ -39,12 +39,17 @@ $following_stmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE follower_id 
 $following_stmt->execute([$user_id]);
 $following_count = (int)$following_stmt->fetchColumn();
 
-// 4. Check if logged in user follows this user
+// 4. Check follow relationships
 $is_following = false;
+$is_follower = false;
 if (!$is_own_profile) {
     $check_follow = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE follower_id = ? AND following_id = ?");
     $check_follow->execute([$logged_in_user_id, $user_id]);
     $is_following = ((int)$check_follow->fetchColumn() > 0);
+
+    $check_follower = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE follower_id = ? AND following_id = ?");
+    $check_follower->execute([$user_id, $logged_in_user_id]);
+    $is_follower = ((int)$check_follower->fetchColumn() > 0);
 }
 ?>
 
@@ -516,17 +521,36 @@ if (!$is_own_profile) {
                 </div>
                 <div class="profile-info">
                     <h2><?php echo htmlspecialchars($user['username']); ?></h2>
+                    <div style="font-size: 13px; color: #0095f6; font-weight: 600; margin-top: 4px; margin-bottom: 4px;">
+                        🏫 <?php echo htmlspecialchars($user['school_name'] ?? 'YSE College'); ?>
+                    </div>
+                    <?php if ($is_follower): ?>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500;">
+                            👤 あなたをフォローしています (Follows you)
+                        </div>
+                    <?php endif; ?>
                     <div class="stats-row">
                         <span><strong><?php echo $post_count; ?></strong> 投稿</span>
-                        <span><strong id="followers-count"><?php echo $followers_count; ?></strong> フォロワー</span>
-                        <span><strong><?php echo $following_count; ?></strong> フォロー中</span>
+                        <span style="cursor: pointer;" onclick="openFollowModal('followers')"><strong id="followers-count"><?php echo $followers_count; ?></strong> フォロワー</span>
+                        <span style="cursor: pointer;" onclick="openFollowModal('following')"><strong><?php echo $following_count; ?></strong> フォロー中</span>
                     </div>
                     <?php if ($is_own_profile): ?>
                         <a href="edit_profile.php" class="edit-btn">プロフィールを編集</a>
                     <?php else: ?>
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
-                            <button id="follow-btn" class="edit-btn" style="<?php echo $is_following ? 'background-color: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--border-color);' : 'background-color: #0095f6; color: white; border: none;'; ?> font-weight: bold; cursor: pointer; padding: 6px 16px;">
-                                <?php echo $is_following ? 'フォロー中 (Following)' : 'フォローする (Follow)'; ?>
+                            <?php
+                            $btn_label = 'フォローする';
+                            $btn_style = 'background-color: #0095f6; color: white; border: none;';
+                            if ($is_following) {
+                                $btn_label = 'フォロー中';
+                                $btn_style = 'background-color: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--border-color);';
+                            } elseif ($is_follower) {
+                                $btn_label = '↩️ フォローバック (Follow Back)';
+                                $btn_style = 'background-color: #0095f6; color: white; border: none; font-weight: bold;';
+                            }
+                            ?>
+                            <button id="follow-btn" class="edit-btn" style="<?php echo $btn_style; ?> font-weight: bold; cursor: pointer; padding: 6px 16px;">
+                                <?php echo $btn_label; ?>
                             </button>
                             <a href="messages.php?user_id=<?php echo $user_id; ?>" class="edit-btn" style="background-color: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--border-color); text-decoration: none; font-weight: 600; padding: 6px 16px;">💬 メッセージ</a>
                         </div>
@@ -758,12 +782,17 @@ if (!$is_own_profile) {
                         if (cnt) cnt.textContent = data.follower_count;
 
                         if (data.is_following) {
-                            followBtn.textContent = 'フォロー中 (Following)';
+                            followBtn.textContent = 'フォロー中';
                             followBtn.style.backgroundColor = 'var(--btn-bg)';
                             followBtn.style.color = 'var(--btn-text)';
                             followBtn.style.border = '1px solid var(--border-color)';
+                        } else if (data.is_follower) {
+                            followBtn.textContent = '↩️ フォローバック (Follow Back)';
+                            followBtn.style.backgroundColor = '#0095f6';
+                            followBtn.style.color = 'white';
+                            followBtn.style.border = 'none';
                         } else {
-                            followBtn.textContent = 'フォローする (Follow)';
+                            followBtn.textContent = 'フォローする';
                             followBtn.style.backgroundColor = '#0095f6';
                             followBtn.style.color = 'white';
                             followBtn.style.border = 'none';
@@ -775,7 +804,135 @@ if (!$is_own_profile) {
                 .catch(err => console.error(err));
             });
         }
+
+        // Followers & Following Modal Engine
+        let activeFollowTab = 'followers';
+        let followModalUserId = <?php echo $user_id; ?>;
+
+        function openFollowModal(type) {
+            activeFollowTab = type;
+            document.getElementById('followListModal').style.display = 'flex';
+            switchFollowTab(type);
+        }
+
+        function closeFollowModal(e) {
+            if (e.target.id === 'followListModal') {
+                document.getElementById('followListModal').style.display = 'none';
+            }
+        }
+
+        function switchFollowTab(type) {
+            activeFollowTab = type;
+            const tabF = document.getElementById('tab-followers');
+            const tabFing = document.getElementById('tab-following');
+
+            if (type === 'followers') {
+                tabF.style.borderBottom = '2px solid #0095f6';
+                tabF.style.color = 'var(--text-color)';
+                tabFing.style.borderBottom = 'none';
+                tabFing.style.color = 'var(--text-secondary)';
+            } else {
+                tabFing.style.borderBottom = '2px solid #0095f6';
+                tabFing.style.color = 'var(--text-color)';
+                tabF.style.borderBottom = 'none';
+                tabF.style.color = 'var(--text-secondary)';
+            }
+
+            const body = document.getElementById('followListBody');
+            body.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">読み込み中...</div>';
+
+            fetch(`fetch_follow_list.php?type=${type}&user_id=${followModalUserId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success || data.users.length === 0) {
+                        body.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 20px;">${type === 'followers' ? 'フォロワーはいません。' : 'フォロー中のユーザーはいません。'}</div>`;
+                        return;
+                    }
+
+                    let html = '';
+                    data.users.forEach(u => {
+                        let btnText = 'フォローする';
+                        let btnStyle = 'background-color: #0095f6; color: white; border: none;';
+
+                        if (u.is_following) {
+                            btnText = 'フォロー中';
+                            btnStyle = 'background-color: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--border-color);';
+                        } else if (u.is_follower) {
+                            btnText = '↩️ フォローバック';
+                            btnStyle = 'background-color: #0095f6; color: white; border: none; font-weight: bold;';
+                        }
+
+                        const isSelf = (u.id == <?php echo $logged_in_user_id; ?>);
+                        const followBtnHtml = isSelf ? '' : `
+                            <button class="list-follow-btn-${u.id}" onclick="toggleListFollow(${u.id}, this)" style="padding: 5px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; ${btnStyle}">
+                                ${btnText}
+                            </button>
+                            <a href="messages.php?user_id=${u.id}" style="padding: 5px 10px; background-color: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--border-color); border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 600;">💬</a>
+                        `;
+
+                        const followerTag = (u.is_follower && !u.is_following) ? `<span style="font-size: 11px; color: #0095f6;">(あなたをフォロー中)</span>` : '';
+
+                        html += `
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 4px; border-bottom: 1px solid var(--border-color);">
+                                <a href="profile.php?id=${u.id}" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; flex: 1; min-width: 0;">
+                                    <img src="${u.avatar_url}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-color); flex-shrink: 0;">
+                                    <div style="display: flex; flex-direction: column; min-width: 0;">
+                                        <span style="font-weight: bold; font-size: 13px; color: var(--text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(u.username)} ${followerTag}</span>
+                                        <span style="font-size: 11px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">🏫 ${escapeHtml(u.school_name || 'YSE College')}</span>
+                                    </div>
+                                </a>
+                                <div style="display: flex; gap: 6px; align-items: center;">
+                                    ${followBtnHtml}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    body.innerHTML = html;
+                });
+        }
+
+        function toggleListFollow(userId, btnEl) {
+            const formData = new FormData();
+            formData.append('following_id', userId);
+
+            fetch('follow_process.php', { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.is_following) {
+                            btnEl.textContent = 'フォロー中';
+                            btnEl.style.backgroundColor = 'var(--btn-bg)';
+                            btnEl.style.color = 'var(--btn-text)';
+                            btnEl.style.border = '1px solid var(--border-color)';
+                        } else if (data.is_follower) {
+                            btnEl.textContent = '↩️ フォローバック';
+                            btnEl.style.backgroundColor = '#0095f6';
+                            btnEl.style.color = 'white';
+                            btnEl.style.border = 'none';
+                        } else {
+                            btnEl.textContent = 'フォローする';
+                            btnEl.style.backgroundColor = '#0095f6';
+                            btnEl.style.color = 'white';
+                            btnEl.style.border = 'none';
+                        }
+                    }
+                });
+        }
     </script>
+
+    <!-- Followers / Following List Modal -->
+    <div class="modal-overlay" id="followListModal" onclick="closeFollowModal(event)" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 1200; justify-content: center; align-items: center;">
+        <div style="background: var(--bg-color); color: var(--text-color); width: 90%; max-width: 440px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); display: flex; flex-direction: column; max-height: 80vh;">
+            <div style="display: flex; border-bottom: 1px solid var(--border-color); background: var(--card-bg);">
+                <button id="tab-followers" onclick="switchFollowTab('followers')" style="flex: 1; padding: 14px; background: none; border: none; font-weight: bold; font-size: 15px; color: var(--text-color); border-bottom: 2px solid #0095f6; cursor: pointer;">フォロワー</button>
+                <button id="tab-following" onclick="switchFollowTab('following')" style="flex: 1; padding: 14px; background: none; border: none; font-weight: bold; font-size: 15px; color: var(--text-secondary); cursor: pointer;">フォロー中</button>
+                <button onclick="document.getElementById('followListModal').style.display='none'" style="padding: 14px; background: none; border: none; font-size: 18px; color: var(--text-color); cursor: pointer;">✕</button>
+            </div>
+            <div id="followListBody" style="padding: 12px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                <div style="text-align: center; color: var(--text-secondary); padding: 20px;">読み込み中...</div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

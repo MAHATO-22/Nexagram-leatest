@@ -112,6 +112,9 @@
             <input type="text" name="username" placeholder="Username (ユーザー名)" required>
         </div>
         <div class="input-group">
+            <input type="text" name="school_name" placeholder="School / College (学校名・大学名)" value="YSE College" required>
+        </div>
+        <div class="input-group">
             <input type="email" name="email" placeholder="School Email (学校のメールアドレス)" required>
         </div>
         <div class="input-group">

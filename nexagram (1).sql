@@ -140,6 +140,7 @@ CREATE TABLE `users` (
   `student_id` varchar(50) NOT NULL,
   `username` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
+  `school_name` varchar(100) DEFAULT 'YSE College',
   `password` varchar(255) NOT NULL,
   `bio` text,
   `profile_pic` varchar(255) DEFAULT 'default.png',

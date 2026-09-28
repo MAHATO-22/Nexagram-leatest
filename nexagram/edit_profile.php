@@ -17,7 +17,8 @@ $user_stmt->execute([$user_id]);
 $user = $user_stmt->fetch();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $new_username = trim($_POST['username']);
+    $new_username    = trim($_POST['username']);
+    $new_school_name = !empty($_POST['school_name']) ? trim($_POST['school_name']) : 'YSE College';
     $profile_image_path = $user['profile_image']; // မူလ ပုံလမ်းကြောင်း ထိန်းထားမည်
 
     // 1. Profile Picture Update ပြုလုပ်ခြင်း
@@ -29,18 +30,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
         if (in_array($fileExtension, $allowedExtensions)) {
-            // Folder မရှိပါက အလိုအလျောက် ဆောက်မည်
             $uploadFileDir = 'uploads/';
             if (!is_dir($uploadFileDir)) {
                 mkdir($uploadFileDir, 0755, true);
             }
 
-            // ဖိုင်နာမည် မထပ်အောင် နာမည်အသစ်ပေးမည်
             $newFileName = 'avatar_' . $user_id . '_' . time() . '.' . $fileExtension;
             $dest_path = $uploadFileDir . $newFileName;
 
             if (move_uploaded_file($fileTmpPath, $dest_path)) {
-                // မူလပုံဟောင်းရှိရင် Server ပေါ်မှ ဖျက်မည်
                 if (!empty($user['profile_image']) && file_exists($user['profile_image'])) {
                     unlink($user['profile_image']);
                 }
@@ -56,8 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 2. Database တွင် အချက်အလက်များ Update လုပ်မည်
     if (empty($message)) {
         if (!empty($new_username)) {
-            $update_stmt = $pdo->prepare("UPDATE users SET username = ?, profile_image = ? WHERE id = ?");
-            if ($update_stmt->execute([$new_username, $profile_image_path, $user_id])) {
+            $update_stmt = $pdo->prepare("UPDATE users SET username = ?, school_name = ?, profile_image = ? WHERE id = ?");
+            if ($update_stmt->execute([$new_username, $new_school_name, $profile_image_path, $user_id])) {
                 $_SESSION['username'] = $new_username;
                 header("Location: profile.php");
                 exit();
@@ -239,8 +237,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="input-group">
-                <label>Username</label>
+                <label>Username (ユーザー名)</label>
                 <input type="text" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required>
+            </div>
+
+            <div class="input-group">
+                <label>School / College (学校名・大学名)</label>
+                <input type="text" name="school_name" value="<?php echo htmlspecialchars($user['school_name'] ?? 'YSE College'); ?>" required>
             </div>
 
             <button type="submit" class="save-btn">Save Changes</button>

@@ -15,31 +15,54 @@ $suggested_users = [];
 $explore_posts = [];
 
 try {
+    // Fetch current user's school
+    $user_info_stmt = $pdo->prepare("SELECT school_name FROM users WHERE id = ?");
+    $user_info_stmt->execute([$current_user_id]);
+    $current_school = $user_info_stmt->fetchColumn() ?: 'YSE College';
+
     // 1. Search Query execution
     if (isset($_GET['search']) && !empty(trim($_GET['search']))) {
         $search_query = trim($_GET['search']);
         $stmt = $pdo->prepare("
-            SELECT u.id, u.username, u.profile_pic, u.profile_image, u.bio,
+            SELECT u.id, u.username, u.school_name, u.profile_pic, u.profile_image, u.bio,
             (SELECT COUNT(*) FROM follows WHERE following_id = u.id) as follower_count,
-            (SELECT COUNT(*) FROM follows WHERE follower_id = :c1 AND following_id = u.id) as is_following
+            (SELECT COUNT(*) FROM follows WHERE follower_id = :c1 AND following_id = u.id) as is_following,
+            (SELECT COUNT(*) FROM follows WHERE follower_id = u.id AND following_id = :c2) as is_follower
             FROM users u
-            WHERE u.username LIKE :q AND u.id != :c2
+            WHERE u.username LIKE :q AND u.id != :c3
         ");
-        $stmt->execute(['q' => "%$search_query%", 'c1' => $current_user_id, 'c2' => $current_user_id]);
+        $stmt->execute(['q' => "%$search_query%", 'c1' => $current_user_id, 'c2' => $current_user_id, 'c3' => $current_user_id]);
         $search_users = $stmt->fetchAll();
     } else {
-        // 2. Global Friend Suggestions (Users from around the world)
+        // 2. Classmate Friend Suggestions (Users from the SAME school/college)
         $sug_stmt = $pdo->prepare("
-            SELECT u.id, u.username, u.profile_pic, u.profile_image, u.bio,
+            SELECT u.id, u.username, u.school_name, u.profile_pic, u.profile_image, u.bio,
             (SELECT COUNT(*) FROM follows WHERE following_id = u.id) as follower_count,
-            (SELECT COUNT(*) FROM follows WHERE follower_id = :c1 AND following_id = u.id) as is_following
+            (SELECT COUNT(*) FROM follows WHERE follower_id = :c1 AND following_id = u.id) as is_following,
+            (SELECT COUNT(*) FROM follows WHERE follower_id = u.id AND following_id = :c2) as is_follower
             FROM users u
-            WHERE u.id != :c2
-            ORDER BY is_following ASC, follower_count DESC, u.created_at DESC
-            LIMIT 6
+            WHERE u.id != :c3 AND u.school_name = :sch
+            ORDER BY is_follower DESC, is_following ASC, follower_count DESC, u.created_at DESC
+            LIMIT 10
         ");
-        $sug_stmt->execute(['c1' => $current_user_id, 'c2' => $current_user_id]);
+        $sug_stmt->execute(['c1' => $current_user_id, 'c2' => $current_user_id, 'c3' => $current_user_id, 'sch' => $current_school]);
         $suggested_users = $sug_stmt->fetchAll();
+
+        // Fallback if no specific classmate recommendations found
+        if (empty($suggested_users)) {
+            $fb_stmt = $pdo->prepare("
+                SELECT u.id, u.username, u.school_name, u.profile_pic, u.profile_image, u.bio,
+                (SELECT COUNT(*) FROM follows WHERE following_id = u.id) as follower_count,
+                (SELECT COUNT(*) FROM follows WHERE follower_id = :c1 AND following_id = u.id) as is_following,
+                (SELECT COUNT(*) FROM follows WHERE follower_id = u.id AND following_id = :c2) as is_follower
+                FROM users u
+                WHERE u.id != :c3
+                ORDER BY is_follower DESC, is_following ASC, follower_count DESC, u.created_at DESC
+                LIMIT 10
+            ");
+            $fb_stmt->execute(['c1' => $current_user_id, 'c2' => $current_user_id, 'c3' => $current_user_id]);
+            $suggested_users = $fb_stmt->fetchAll();
+        }
     }
 
     // 3. Explore Grid Posts
@@ -313,6 +336,12 @@ try {
             gap: 10px;
         }
 
+        .action-follow-btn.followback {
+            background-color: #0095f6;
+            color: white;
+            border: none;
+            font-weight: bold;
+        }
         .action-follow-btn {
             padding: 7px 18px;
             border-radius: 8px;
@@ -431,12 +460,12 @@ try {
                                     <?php endif; ?>
                                     <div class="user-text">
                                         <span class="user-name"><?php echo htmlspecialchars($u['username']); ?></span>
-                                        <span class="user-subtext"><?php echo (int)$u['follower_count']; ?> 人のフォロワー</span>
+                                        <span class="user-subtext" style="color: #0095f6; font-size: 12px; font-weight: 500;">🏫 <?php echo htmlspecialchars($u['school_name'] ?? 'YSE College'); ?> • <?php echo (int)$u['follower_count']; ?> 人のフォロワー</span>
                                     </div>
                                 </a>
                                 <div class="user-actions">
-                                    <button class="action-follow-btn js-follow-btn <?php echo $u['is_following'] ? 'following' : 'follow'; ?>" data-user-id="<?php echo $u['id']; ?>">
-                                        <?php echo $u['is_following'] ? 'フォロー中' : 'フォローする'; ?>
+                                    <button class="action-follow-btn js-follow-btn <?php echo $u['is_following'] ? 'following' : ($u['is_follower'] ? 'followback' : 'follow'); ?>" data-user-id="<?php echo $u['id']; ?>" data-is-follower="<?php echo (int)$u['is_follower']; ?>">
+                                        <?php echo $u['is_following'] ? 'フォロー中' : ($u['is_follower'] ? '↩️ フォローバック' : 'フォローする'); ?>
                                     </button>
                                     <a href="messages.php?user_id=<?php echo $u['id']; ?>" class="action-chat-btn">💬 チャット</a>
                                 </div>
@@ -447,10 +476,10 @@ try {
             </div>
         <?php endif; ?>
 
-        <!-- 2. Global Friend Suggestions Section (when not searching) -->
+        <!-- 2. Classmate & School Friend Suggestions Section (when not searching) -->
         <?php if (empty($search_query) && !empty($suggested_users)): ?>
             <div class="section-block">
-                <div class="section-title">🌎 世界中のおすすめのユーザー (Suggested Friends Worldwide)</div>
+                <div class="section-title">🏫 同じ学校・大学のおすすめの友達 (Suggested School & College Classmates)</div>
                 <ul class="user-list">
                     <?php foreach ($suggested_users as $u): ?>
                         <li class="user-item">
@@ -465,12 +494,12 @@ try {
                                 <?php endif; ?>
                                 <div class="user-text">
                                     <span class="user-name"><?php echo htmlspecialchars($u['username']); ?></span>
-                                    <span class="user-subtext"><?php echo (int)$u['follower_count']; ?> 人のフォロワー</span>
+                                    <span class="user-subtext" style="color: #0095f6; font-size: 12px; font-weight: 500;">🏫 <?php echo htmlspecialchars($u['school_name'] ?? 'YSE College'); ?> • <?php echo (int)$u['follower_count']; ?> 人のフォロワー</span>
                                 </div>
                             </a>
                             <div class="user-actions">
-                                <button class="action-follow-btn js-follow-btn <?php echo $u['is_following'] ? 'following' : 'follow'; ?>" data-user-id="<?php echo $u['id']; ?>">
-                                    <?php echo $u['is_following'] ? 'フォロー中' : 'フォローする'; ?>
+                                <button class="action-follow-btn js-follow-btn <?php echo $u['is_following'] ? 'following' : ($u['is_follower'] ? 'followback' : 'follow'); ?>" data-user-id="<?php echo $u['id']; ?>" data-is-follower="<?php echo (int)$u['is_follower']; ?>">
+                                    <?php echo $u['is_following'] ? 'フォロー中' : ($u['is_follower'] ? '↩️ フォローバック' : 'フォローする'); ?>
                                 </button>
                                 <a href="messages.php?user_id=<?php echo $u['id']; ?>" class="action-chat-btn">💬 チャット</a>
                             </div>
@@ -553,11 +582,15 @@ try {
                     if (data.success) {
                         if (data.is_following) {
                             this.textContent = 'フォロー中';
-                            this.classList.remove('follow');
+                            this.classList.remove('follow', 'followback');
                             this.classList.add('following');
+                        } else if (data.is_follower) {
+                            this.textContent = '↩️ フォローバック';
+                            this.classList.remove('following', 'follow');
+                            this.classList.add('followback');
                         } else {
                             this.textContent = 'フォローする';
-                            this.classList.remove('following');
+                            this.classList.remove('following', 'followback');
                             this.classList.add('follow');
                         }
                     } else {

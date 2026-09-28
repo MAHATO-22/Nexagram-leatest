@@ -5,10 +5,11 @@ require_once 'config.php'; // ရှေ့မှာ ဆောက်ခဲ့တ�
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Form ကနေ ပို့လိုက်တဲ့ Data တွေကို လက်ခံပြီး သန့်စင်ခြင်း (Sanitization)
-    $student_id = trim($_POST['student_id']);
-    $username   = trim($_POST['username']);
-    $email      = trim($_POST['email']);
-    $password   = $_POST['password'];
+    $student_id  = trim($_POST['student_id']);
+    $username    = trim($_POST['username']);
+    $school_name = !empty($_POST['school_name']) ? trim($_POST['school_name']) : 'YSE College';
+    $email       = trim($_POST['email']);
+    $password    = $_POST['password'];
 
     // အချက်အလက်တွေ အားလုံး ပါ၊ မပါ အခြေခံ စစ်ဆေးခြင်း
     if (empty($student_id) || empty($username) || empty($email) || empty($password)) {
@@ -28,9 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
         // 3. Database ထဲကို ကျောင်းသားအသစ်အဖြစ် သိမ်းဆည်းခြင်း
-        $sql = "INSERT INTO users (student_id, username, email, password) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO users (student_id, username, school_name, email, password) VALUES (?, ?, ?, ?, ?)";
         $insert_stmt = $pdo->prepare($sql);
-        $insert_stmt->execute([$student_id, $username, $email, $hashed_password]);
+        $insert_stmt->execute([$student_id, $username, $school_name, $email, $hashed_password]);
 
         // အကောင့်ဖွင့်တာ အောင်မြင်သွားရင် Login Page ကို ပို့ပေးမယ် (Login Page ကို နောက်အဆင့်မှာ ဆောက်ပါမယ်)
         echo "<script>

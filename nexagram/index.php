@@ -23,16 +23,37 @@ try {
     $stmt->execute([$current_user_id]);
     $posts = $stmt->fetchAll();
 
-    // Suggested Friends Query (Users from around the world not yet followed)
-    $sug_query = "SELECT u.id, u.username, u.profile_image, u.profile_pic, u.bio,
+    // Fetch current logged-in user's school
+    $user_info_stmt = $pdo->prepare("SELECT school_name FROM users WHERE id = ?");
+    $user_info_stmt->execute([$current_user_id]);
+    $current_school = $user_info_stmt->fetchColumn() ?: 'YSE College';
+
+    // Suggested Friends Query (Classmates & Friends from SAME school/college only)
+    $sug_query = "SELECT u.id, u.username, u.school_name, u.profile_image, u.profile_pic, u.bio,
                   (SELECT COUNT(*) FROM follows WHERE following_id = u.id) as follower_count
                   FROM users u
-                  WHERE u.id != ? AND u.id NOT IN (SELECT following_id FROM follows WHERE follower_id = ?)
+                  WHERE u.id != :c1 
+                  AND u.school_name = :sch
+                  AND u.id NOT IN (SELECT following_id FROM follows WHERE follower_id = :c2)
                   ORDER BY RAND()
                   LIMIT 5";
     $sug_stmt = $pdo->prepare($sug_query);
-    $sug_stmt->execute([$current_user_id, $current_user_id]);
+    $sug_stmt->execute(['c1' => $current_user_id, 'sch' => $current_school, 'c2' => $current_user_id]);
     $suggested_users = $sug_stmt->fetchAll();
+
+    // Fallback if no specific classmate suggestions found
+    if (empty($suggested_users)) {
+        $fb_query = "SELECT u.id, u.username, u.school_name, u.profile_image, u.profile_pic, u.bio,
+                      (SELECT COUNT(*) FROM follows WHERE following_id = u.id) as follower_count
+                      FROM users u
+                      WHERE u.id != :c1 
+                      AND u.id NOT IN (SELECT following_id FROM follows WHERE follower_id = :c2)
+                      ORDER BY RAND()
+                      LIMIT 5";
+        $fb_stmt = $pdo->prepare($fb_query);
+        $fb_stmt->execute(['c1' => $current_user_id, 'c2' => $current_user_id]);
+        $suggested_users = $fb_stmt->fetchAll();
+    }
 } catch (\PDOException $e) {
     die("エラー: " . $e->getMessage());
 }
@@ -630,15 +651,15 @@ try {
 
         </div> <!-- feed-container -->
 
-        <!-- Suggested Friends Sidebar (Users from around the world) -->
+        <!-- Suggested Friends Sidebar (Same School / College Friends) -->
         <div class="suggested-sidebar">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <span style="font-weight: bold; color: var(--text-secondary); font-size: 14px;">おすすめのユーザー</span>
+                <span style="font-weight: bold; color: var(--text-secondary); font-size: 14px;">🏫 同校の友達おすすめ</span>
                 <a href="explore.php" style="text-decoration: none; font-size: 12px; font-weight: bold; color: #0095f6;">すべて見る</a>
             </div>
 
             <?php if (empty($suggested_users)): ?>
-                <div style="font-size: 13px; color: var(--text-secondary); padding: 10px 0;">新しいおすすめユーザーはいません。</div>
+                <div style="font-size: 13px; color: var(--text-secondary); padding: 10px 0;">同じ学校の新しいおすすめユーザーはいません。</div>
             <?php else: ?>
                 <?php foreach ($suggested_users as $sug_user): ?>
                     <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 0;">
@@ -652,7 +673,7 @@ try {
                             <?php endif; ?>
                             <div style="display: flex; flex-direction: column; min-width: 0;">
                                 <span style="font-weight: bold; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-color);"><?php echo htmlspecialchars($sug_user['username']); ?></span>
-                                <span style="font-size: 12px; color: var(--text-secondary);"><?php echo $sug_user['follower_count']; ?> 人のフォロワー</span>
+                                <span style="font-size: 11px; color: #0095f6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">🏫 <?php echo htmlspecialchars($sug_user['school_name'] ?? 'YSE College'); ?></span>
                             </div>
                         </a>
                         <button class="index-follow-btn" data-user-id="<?php echo $sug_user['id']; ?>" style="padding: 6px 14px; background-color: #0095f6; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; flex-shrink: 0; margin-left: 8px;">

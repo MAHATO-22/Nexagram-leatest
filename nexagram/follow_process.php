@@ -44,6 +44,11 @@ try {
         $is_following = true;
     }
 
+    // Check if target user follows current logged-in user (Follow Back situation)
+    $follower_check = $pdo->prepare("SELECT id FROM follows WHERE follower_id = ? AND following_id = ?");
+    $follower_check->execute([$following_id, $follower_id]);
+    $is_follower = ((bool)$follower_check->fetch());
+
     // Get updated follower count for the target user
     $cnt_stmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE following_id = ?");
     $cnt_stmt->execute([$following_id]);
@@ -52,6 +57,8 @@ try {
     echo json_encode([
         'success' => true,
         'is_following' => $is_following,
+        'is_follower' => $is_follower,
+        'is_mutual' => ($is_following && $is_follower),
         'follower_count' => $follower_count
     ]);
 } catch (\PDOException $e) {
