@@ -1,13 +1,8 @@
 <?php
 // config.php - Nexagram Database Connection
+require_once 'env.php';
 
-$host = 'localhost';
-$db   = 'nexagram'; // Database နာမည်ကို nexagram ပြောင်းလိုက်ပါပြီ
-$user = 'root';     // XAMPP default username
-$pass = '';         // XAMPP default password
-$charset = 'utf8mb4';
-
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$dsn = "mysql:host=$host;port=$port;dbname=$db;charset=$charset";
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
