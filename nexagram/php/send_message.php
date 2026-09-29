@@ -3,7 +3,7 @@
 session_start();
 header('Content-Type: application/json');
 
-require_once 'config.php';
+require_once '../config.php';
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
@@ -25,7 +25,6 @@ if ($message_text === '') {
 }
 
 try {
-    // Check if receiver exists
     $user_check = $pdo->prepare("SELECT id FROM users WHERE id = ?");
     $user_check->execute([$receiver_id]);
     if (!$user_check->fetch()) {
@@ -37,7 +36,6 @@ try {
     $stmt->execute([$sender_id, $receiver_id, $message_text]);
     $message_id = $pdo->lastInsertId();
 
-    // Fetch inserted message with created_at
     $msg_stmt = $pdo->prepare("SELECT * FROM messages WHERE id = ?");
     $msg_stmt->execute([$message_id]);
     $message = $msg_stmt->fetch();

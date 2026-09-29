@@ -3,7 +3,7 @@
 session_start();
 header('Content-Type: application/json');
 
-require_once 'config.php';
+require_once '../config.php';
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
@@ -13,7 +13,6 @@ if (!isset($_SESSION['user_id'])) {
 $current_user_id = $_SESSION['user_id'];
 
 try {
-    // Get all users except current user, along with latest message info and unread count
     $sql = "
         SELECT 
             u.id, 
@@ -88,7 +87,6 @@ try {
             $user['formatted_time'] = '';
         }
 
-        // Format short preview snippet
         if (!empty($user['last_message_text'])) {
             $prefix = ($user['last_message_sender_id'] == $current_user_id) ? 'あなた: ' : '';
             $user['preview_snippet'] = $prefix . mb_substr($user['last_message_text'], 0, 28, 'UTF-8');

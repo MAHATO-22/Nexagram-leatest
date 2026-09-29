@@ -60,414 +60,7 @@ if (!$is_own_profile) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($user['username']); ?> • Profile</title>
-    <style>
-        /* Modern System Theme Layout */
-        :root {
-            --bg-color: #ffffff;
-            --text-color: #000000;
-            --border-color: #dbdbdb;
-            --btn-bg: #efefef;
-            --btn-text: #000000;
-            --card-bg: #f8f9fa;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-color: #121212;
-                --text-color: #f5f5f5;
-                --border-color: #262626;
-                --btn-bg: #363636;
-                --btn-text: #ffffff;
-                --card-bg: #262626;
-            }
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            display: flex;
-        }
-
-        /* Sidebar Navigation Design */
-
-
-
-        /* Sidebar Navigation */
-        /* Sidebar Navigation - Full Matching Index Layout */
-        .sidebar {
-            width: 240px;
-            height: 100vh;
-            border-right: 1px solid var(--border-color);
-            position: fixed;
-            top: 0;
-            left: 0;
-            padding: 30px 20px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            background-color: var(--bg-color);
-        }
-
-        .sidebar h3 {
-            color: #e4405f;
-            /* Nexagram Logo Color */
-            font-size: 24px;
-            margin-top: 0;
-            margin-bottom: 30px;
-            font-style: italic;
-        }
-
-        .nav-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            color: var(--text-color);
-            text-decoration: none;
-            font-size: 15px;
-            border-radius: 10px;
-            transition: background-color 0.2s ease;
-        }
-
-        .nav-item:hover {
-            background-color: var(--card-bg);
-        }
-
-        /* Profile နေရာ ရောက်နေသည့်အတွက် Profile Tab ကို Active လုပ်ထားမည် */
-        .nav-item.active {
-            background-color: var(--card-bg);
-            font-weight: bold;
-        }
-
-        .nav-bottom {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .main-content {
-            margin-left: 240px;
-            width: calc(100% - 240px);
-            display: flex;
-            justify-content: center;
-            padding: 30px 20px;
-            box-sizing: border-box;
-        }
-
-        .profile-container {
-            max-width: 935px;
-            width: 100%;
-        }
-
-        /* Profile Header */
-        .profile-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .avatar-box {
-            width: 150px;
-            height: 150px;
-            margin-right: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .avatar-circle {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            background-color: var(--card-bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 48px;
-            color: var(--text-color);
-            object-fit: cover;
-        }
-
-        .profile-info h2 {
-            font-size: 20px;
-            font-weight: 400;
-            margin-bottom: 15px;
-        }
-
-        .stats-row {
-            display: flex;
-            gap: 30px;
-            margin-bottom: 15px;
-        }
-
-        .edit-btn {
-            background-color: var(--btn-bg);
-            color: var(--btn-text);
-            border: none;
-            padding: 7px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        /* Posts Grid Section */
-        .posts-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-        }
-
-        .grid-item {
-            position: relative;
-            width: 100%;
-            padding-top: 100%;
-            background-color: var(--card-bg);
-            cursor: pointer;
-            overflow: hidden;
-            border-radius: 4px;
-        }
-
-        .grid-item img,
-        .grid-item video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .text-post-preview {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            padding: 15px;
-            box-sizing: border-box;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        /* Modal Overlay & Card Layout */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-box {
-            background: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            width: 90%;
-            max-width: 935px;
-            height: 85vh;
-            max-height: 600px;
-            border-radius: 4px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-        }
-
-        .modal-media {
-            width: 60%;
-            background: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .modal-media img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            /* ဘေးက အမည်းကွက်များ မရှိဘဲ ပုံပြည့်စေရန် */
-        }
-
-        .modal-media video {
-
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .modal-details {
-            width: 40%;
-            display: flex;
-            flex-direction: column;
-            border-left: 1px solid var(--border-color);
-            background: var(--bg-color);
-            position: relative;
-        }
-
-        .modal-header-sec {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .user-info-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .modal-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: var(--card-bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .modal-body-sec {
-            flex: 1;
-            padding: 16px;
-            overflow-y: auto;
-            font-size: 14px;
-        }
-
-        .caption-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .comment-item {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 12px;
-            font-size: 14px;
-        }
-
-        .modal-footer-sec {
-            border-top: 1px solid var(--border-color);
-            padding: 12px 16px;
-        }
-
-        .action-icons {
-            display: flex;
-            gap: 16px;
-            font-size: 22px;
-            margin-bottom: 8px;
-        }
-
-        .like-btn {
-            cursor: pointer;
-            user-select: none;
-            transition: transform 0.1s ease;
-        }
-
-        .like-btn:active {
-            transform: scale(1.2);
-        }
-
-        .post-date {
-            font-size: 10px;
-            color: #8e8e8e;
-            text-transform: uppercase;
-            margin-top: 6px;
-        }
-
-        .add-comment-box {
-            display: flex;
-            align-items: center;
-            border-top: none;
-            padding: 12px 16px;
-            margin: 12px -16px -12px -16px;
-        }
-
-        .add-comment-box input {
-            width: 100%;
-            border: none;
-            outline: none;
-            background: transparent;
-            color: var(--text-color);
-            font-size: 14px;
-        }
-
-        .post-btn {
-            color: #0095f6;
-            font-weight: 600;
-            font-size: 14px;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-
-        .options-btn {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        .options-menu {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--card-bg);
-            border-radius: 12px;
-            width: 240px;
-            overflow: hidden;
-            z-index: 1100;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-        }
-
-        .options-menu a,
-        .options-menu button {
-            display: block;
-            width: 100%;
-            padding: 12px 0;
-            text-align: center;
-            background: none;
-            border: none;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-color);
-            font-size: 14px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .options-menu .delete-text {
-            color: #ed4956;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="css/profile.css">
 </head>
 
 <body>
@@ -478,19 +71,19 @@ if (!$is_own_profile) {
         <h3>Nexagram</h3>
         <div class="nav-menu">
             <a href="index.php" class="nav-item">
-                <span>🏠</span> ホーム (Home)
+                <span>🏠</span> ホーム
             </a>
             <a href="explore.php" class="nav-item">
-                <span>🔍</span> 検索 (Search)
+                <span>🔍</span> 検索
             </a>
             <a href="messages.php" class="nav-item">
-                <span>✉️</span> メッセージ (Messages)
+                <span>✉️</span> メッセージ
             </a>
             <a href="create_post.php" class="nav-item">
-                <span>➕</span> 作成 (Create Post)
+                <span>➕</span> 作成
             </a>
             <a href="profile.php" class="nav-item <?php echo $is_own_profile ? 'active' : ''; ?>">
-                <span>👤</span> プロフィール (Profile)
+                <span>👤</span> プロフィール
             </a>
         </div>
     </div>
@@ -499,7 +92,7 @@ if (!$is_own_profile) {
         <a href="#" class="nav-item">
             <span>🌙</span> ダークモード
         </a>
-        <a href="logout.php" class="nav-item" style="color: #ed4956;">
+        <a href="php/logout.php" class="nav-item" style="color: #ed4956;">
             <span>🚪</span> ログアウト
         </a>
     </div>
@@ -652,7 +245,7 @@ if (!$is_own_profile) {
             const captionBox = document.getElementById('modalCaption');
             const dateBox = document.getElementById('modalDate');
 
-            document.getElementById('deletePostBtn').href = 'delete_post.php?id=' + post.id;
+            document.getElementById('deletePostBtn').href = 'php/delete_post.php?id=' + post.id;
             document.getElementById('editPostBtn').href = 'edit_post.php?id=' + post.id;
 
             captionBox.innerText = ' ' + (post.caption || '');
@@ -678,7 +271,7 @@ if (!$is_own_profile) {
         }
 
         function loadPostDetails(postId) {
-            fetch('get_post_details.php?post_id=' + postId)
+            fetch('php/get_post_details.php?post_id=' + postId)
                 .then(res => res.json())
                 .then(data => {
                     if (data.success !== true && data.status !== 'success') return;
@@ -705,7 +298,7 @@ if (!$is_own_profile) {
             const formData = new FormData();
             formData.append('post_id', currentPostId);
 
-            fetch('like_process.php', {
+            fetch('php/like_process.php', {
                     method: 'POST',
                     body: formData,
                     headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -738,7 +331,7 @@ if (!$is_own_profile) {
             // backend က comment_text ကို သုံးသည်
             formData.append('comment_text', comment);
 
-            fetch('comment_process.php', {
+            fetch('php/comment_process.php', {
                     method: 'POST',
                     body: formData,
                     headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -771,7 +364,7 @@ if (!$is_own_profile) {
                 const formData = new FormData();
                 formData.append('following_id', <?php echo $user_id; ?>);
 
-                fetch('follow_process.php', {
+                fetch('php/follow_process.php', {
                     method: 'POST',
                     body: formData
                 })
@@ -841,7 +434,7 @@ if (!$is_own_profile) {
             const body = document.getElementById('followListBody');
             body.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">読み込み中...</div>';
 
-            fetch(`fetch_follow_list.php?type=${type}&user_id=${followModalUserId}`)
+            fetch(`php/fetch_follow_list.php?type=${type}&user_id=${followModalUserId}`)
                 .then(res => res.json())
                 .then(data => {
                     if (!data.success || data.users.length === 0) {
@@ -895,7 +488,7 @@ if (!$is_own_profile) {
             const formData = new FormData();
             formData.append('following_id', userId);
 
-            fetch('follow_process.php', { method: 'POST', body: formData })
+            fetch('php/follow_process.php', { method: 'POST', body: formData })
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {

@@ -4,98 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nexagram - Register</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #fafafa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .container {
-            background: #ffffff;
-            border: 1px solid #dbdbdb;
-            width: 350px;
-            padding: 40px;
-            text-align: center;
-            border-radius: 4px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        .logo {
-            font-size: 32px;
-            font-weight: bold;
-            font-style: italic;
-            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            color: #8e8e8e;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            line-height: 1.4;
-        }
-
-        .input-group {
-            margin-bottom: 8px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 10px;
-            background: #fafafa;
-            border: 1px solid #dbdbdb;
-            border-radius: 4px;
-            font-size: 12px;
-            outline: none;
-        }
-
-        .input-group input:focus {
-            border-color: #a8a8a8;
-        }
-
-        .btn-submit {
-            width: 100%;
-            background-color: #0095f6;
-            color: white;
-            border: none;
-            padding: 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .btn-submit:hover {
-            background-color: #1877f2;
-        }
-
-        .footer-text {
-            margin-top: 25px;
-            font-size: 14px;
-            color: #262626;
-        }
-
-        .footer-text a {
-            color: #0095f6;
-            text-decoration: none;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="css/register.css">
 </head>
 <body>
 
@@ -103,8 +12,8 @@
     <div class="logo">Nexagram</div>
     <div class="subtitle">キャンパスの仲間とつながり、最新の学内情報をシェアしよう。</div>
     
-    <!-- データを register_process.php に送信します -->
-    <form action="register_process.php" method="POST">
+    <!-- データを php/register_process.php に送信します -->
+    <form action="php/register_process.php" method="POST">
         <div class="input-group">
             <input type="text" name="student_id" placeholder="Student ID (学籍番号)" required>
         </div>

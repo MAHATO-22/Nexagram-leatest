@@ -3,7 +3,7 @@
 session_start();
 header('Content-Type: application/json');
 
-require_once 'config.php';
+require_once '../config.php';
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
@@ -20,7 +20,6 @@ if ($receiver_id <= 0) {
 }
 
 try {
-    // 1. Fetch receiver profile details
     $user_stmt = $pdo->prepare("SELECT id, username, profile_image, profile_pic, bio FROM users WHERE id = ?");
     $user_stmt->execute([$receiver_id]);
     $receiver = $user_stmt->fetch();
@@ -30,7 +29,6 @@ try {
         exit;
     }
 
-    // Determine avatar image path
     $avatar = 'default.png';
     if (!empty($receiver['profile_image'])) {
         $avatar = $receiver['profile_image'];
@@ -39,13 +37,10 @@ try {
     }
     $receiver['avatar_url'] = $avatar;
 
-    // 2. Mark incoming messages as read
     $mark_read = $pdo->prepare("UPDATE messages SET is_read = 1 WHERE sender_id = ? AND receiver_id = ? AND is_read = 0");
     $mark_read->execute([$receiver_id, $current_user_id]);
 
-    // 3. Fetch messages between current user & receiver
     if ($last_id > 0) {
-        // Fetch only new messages since last_id
         $msg_stmt = $pdo->prepare("
             SELECT * FROM messages 
             WHERE ((sender_id = :c1 AND receiver_id = :r1)
@@ -61,7 +56,6 @@ try {
             'last_id' => $last_id
         ]);
     } else {
-        // Fetch all message history
         $msg_stmt = $pdo->prepare("
             SELECT * FROM messages 
             WHERE (sender_id = :c1 AND receiver_id = :r1)
@@ -78,7 +72,6 @@ try {
 
     $messages = $msg_stmt->fetchAll();
 
-    // Format timestamps for display
     foreach ($messages as &$msg) {
         $msg['formatted_time'] = date('H:i', strtotime($msg['created_at']));
         $msg['formatted_date'] = date('Y/m/d', strtotime($msg['created_at']));

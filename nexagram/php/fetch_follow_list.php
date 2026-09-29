@@ -3,7 +3,7 @@
 session_start();
 header('Content-Type: application/json');
 
-require_once 'config.php';
+require_once '../config.php';
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'error' => 'Unauthorized']);
@@ -21,7 +21,6 @@ if ($target_user_id <= 0) {
 
 try {
     if ($type === 'followers') {
-        // Fetch users who follow target_user_id
         $sql = "
             SELECT u.id, u.username, u.profile_image, u.profile_pic, u.school_name,
             (SELECT COUNT(*) FROM follows WHERE follower_id = :curr1 AND following_id = u.id) as is_following,
@@ -32,7 +31,6 @@ try {
             ORDER BY is_follower DESC, f.created_at DESC
         ";
     } else {
-        // Fetch users whom target_user_id is following
         $sql = "
             SELECT u.id, u.username, u.profile_image, u.profile_pic, u.school_name,
             (SELECT COUNT(*) FROM follows WHERE follower_id = :curr1 AND following_id = u.id) as is_following,

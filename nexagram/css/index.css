@@ -1,0 +1,479 @@
+:root {
+         --bg-color: #fafafa;
+         --card-bg: #ffffff;
+         --text-color: #000000;
+         --text-secondary: #8e8e8e;
+         --border-color: #dbdbdb;
+         --sidebar-hover: #f2f2f2;
+         --comment-bubble-bg: #f0f2f5;
+         --overlay-bg: rgba(0, 0, 0, 0.5);
+         --avatar-bg: #e4e6eb;
+     }
+
+     [data-theme="dark"] {
+         --bg-color: #000000;
+         --card-bg: #121212;
+         --text-color: #f5f5f5;
+         --text-secondary: #a8a8a8;
+         --border-color: #262626;
+         --sidebar-hover: #1c1c1e;
+         --comment-bubble-bg: #242526;
+         --overlay-bg: rgba(0, 0, 0, 0.7);
+         --avatar-bg: #3a3b3c;
+     }
+
+     * {
+         margin: 0;
+         padding: 0;
+         box-sizing: border-box;
+         font-family: 'Helvetica Neue', Arial, sans-serif;
+     }
+
+     body {
+         background-color: var(--bg-color);
+         color: var(--text-color);
+         display: flex;
+         transition: background 0.3s, color 0.3s;
+     }
+
+     .sidebar {
+         position: fixed;
+         left: 0;
+         top: 0;
+         height: 100vh;
+         width: 245px;
+         border-right: 1px solid var(--border-color);
+         padding: 25px 12px;
+         display: flex;
+         flex-direction: column;
+         background-color: var(--card-bg);
+         z-index: 100;
+         transition: background 0.3s, border 0.3s;
+     }
+
+     .logo {
+         font-size: 26px;
+         font-weight: bold;
+         font-style: italic;
+         background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+         -webkit-background-clip: text;
+         -webkit-text-fill-color: transparent;
+         background-clip: text;
+         margin-bottom: 35px;
+         padding-left: 12px;
+     }
+
+     .nav-menu {
+         list-style: none;
+         display: flex;
+         flex-direction: column;
+         height: 100%;
+     }
+
+     .nav-item {
+         padding: 12px;
+         margin: 4px 0;
+         border-radius: 8px;
+         cursor: pointer;
+         font-size: 16px;
+         font-weight: 500;
+         transition: background 0.2s;
+     }
+
+     .nav-item:hover {
+         background-color: var(--sidebar-hover);
+     }
+
+     .nav-item a {
+         text-decoration: none;
+         color: var(--text-color);
+         display: block;
+         width: 100%;
+     }
+
+     .theme-toggle-btn {
+         color: var(--text-color);
+         font-weight: 500;
+         display: flex;
+         align-items: center;
+         gap: 5px;
+     }
+
+     .logout-btn {
+         margin-top: auto;
+         color: #ed4956;
+         font-weight: bold;
+     }
+
+
+     /* Sidebar ကို ကျော်ပြီး ကျန်တဲ့ ဧရိယာတစ်ခုလုံးရဲ့ အလယ်တည့်တည့် ရောက်အောင် ညှိမည် */
+     .main-content {
+         margin-left: 250px;
+         width: calc(100% - 250px);
+         display: flex;
+         justify-content: center;
+         padding: 30px 20px;
+         gap: 32px;
+         box-sizing: border-box;
+     }
+
+     .feed-container {
+         width: 100%;
+         max-width: 600px;
+         margin: 0;
+     }
+
+     .suggested-sidebar {
+         width: 320px;
+         flex-shrink: 0;
+         display: flex;
+         flex-direction: column;
+         gap: 14px;
+         height: fit-content;
+         position: sticky;
+         top: 30px;
+     }
+
+     @media (max-width: 1050px) {
+         .suggested-sidebar {
+             display: none;
+         }
+         .feed-container {
+             margin: 0 auto;
+         }
+     }
+
+     .post-card {
+         background: var(--card-bg);
+         border: 1px solid var(--border-color);
+         border-radius: 8px;
+         margin-bottom: 24px;
+         overflow: hidden;
+         transition: background 0.3s, border 0.3s;
+     }
+
+     .post-header {
+         display: flex;
+         align-items: center;
+         padding: 12px 16px;
+         border-bottom: 1px solid var(--border-color);
+     }
+
+     .profile-img-avatar {
+         width: 40px;
+         height: 40px;
+         border-radius: 50%;
+         object-fit: cover;
+         margin-right: 12px;
+         border: 1px solid var(--border-color);
+         background-color: var(--avatar-bg);
+     }
+
+     .avatar-circle {
+         width: 40px;
+         height: 40px;
+         border-radius: 50%;
+         background-color: var(--avatar-bg);
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         font-size: 18px;
+         font-weight: bold;
+         color: var(--text-color);
+         margin-right: 12px;
+         text-transform: uppercase;
+         border: 1px solid var(--border-color);
+     }
+
+     .header-info {
+         display: flex;
+         flex-direction: column;
+     }
+
+     .username {
+         font-weight: bold;
+         font-size: 15px;
+         color: var(--text-color);
+     }
+
+     .post-time-top {
+         font-size: 12px;
+         color: var(--text-secondary);
+         margin-top: 2px;
+     }
+
+     .post-image-box {
+         width: 100%;
+         max-height: 580px;
+         background-color: #000;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+     }
+
+     .post-image {
+         width: 100%;
+         height: auto;
+         display: block;
+         object-fit: contain;
+     }
+
+     .counts-row {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         padding: 10px 16px;
+         font-size: 13px;
+         color: var(--text-secondary);
+         border-bottom: 1px solid var(--border-color);
+     }
+
+     .likes-count-display {
+         display: flex;
+         align-items: center;
+         gap: 4px;
+     }
+
+     .action-bar {
+         display: flex;
+         border-bottom: 1px solid var(--border-color);
+         padding: 4px;
+     }
+
+     .action-button {
+         flex: 1;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         gap: 8px;
+         padding: 8px;
+         text-decoration: none;
+         font-size: 14px;
+         font-weight: bold;
+         color: var(--text-color);
+         border-radius: 4px;
+         cursor: pointer;
+         transition: background 0.2s;
+     }
+
+     .action-button:hover {
+         background-color: var(--sidebar-hover);
+     }
+
+     .action-icon {
+         font-size: 18px;
+     }
+
+     .post-info {
+         padding: 14px 16px;
+     }
+
+     .post-caption {
+         font-size: 14px;
+         line-height: 1.5;
+         color: var(--text-color);
+     }
+
+     .post-caption .author {
+         font-weight: bold;
+         margin-right: 8px;
+     }
+
+     .comment-overlay {
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         background: var(--overlay-bg);
+         z-index: 999;
+         display: none;
+         opacity: 0;
+         transition: opacity 0.3s ease;
+     }
+
+     .comment-sheet {
+         position: fixed;
+         bottom: -100%;
+         left: 50%;
+         transform: translateX(-50%);
+         width: 100%;
+         max-width: 550px;
+         height: 75vh;
+         background: var(--card-bg);
+         border-radius: 16px 16px 0 0;
+         z-index: 1000;
+         display: flex;
+         flex-direction: column;
+         transition: bottom 0.4s cubic-bezier(0.1, 0.76, 0.55, 0.94);
+         border: 1px solid var(--border-color);
+         box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+     }
+
+     .comment-sheet.active {
+         bottom: 0;
+     }
+
+     .sheet-header {
+         padding: 14px;
+         text-align: center;
+         font-weight: bold;
+         font-size: 16px;
+         border-bottom: 1px solid var(--border-color);
+         position: relative;
+     }
+
+     .sheet-close-btn {
+         position: absolute;
+         right: 16px;
+         top: 14px;
+         font-size: 20px;
+         cursor: pointer;
+         color: var(--text-secondary);
+     }
+
+     .sheet-body {
+         flex: 1;
+         overflow-y: auto;
+         padding: 16px;
+     }
+
+     .panel-comment-item {
+         display: flex;
+         flex-direction: column;
+         align-items: flex-start;
+         margin-bottom: 12px;
+     }
+
+     .panel-comment-bubble {
+         background-color: var(--comment-bubble-bg);
+         padding: 10px 14px;
+         border-radius: 18px;
+         max-width: 100%;
+         word-break: break-word;
+     }
+
+     .panel-comment-user {
+         font-weight: bold;
+         font-size: 13px;
+         color: var(--text-color);
+         display: block;
+         margin-bottom: 2px;
+     }
+
+     .panel-comment-text {
+         font-size: 13px;
+         color: var(--text-color);
+         line-height: 1.4;
+     }
+
+     .sheet-footer {
+         border-top: 1px solid var(--border-color);
+         padding: 12px;
+         background-color: var(--card-bg);
+     }
+
+     .panel-comment-form {
+         display: flex;
+         background: var(--comment-bubble-bg);
+         padding: 8px 14px;
+         border-radius: 20px;
+         align-items: center;
+     }
+
+     .panel-comment-input {
+         flex: 1;
+         border: none;
+         outline: none;
+         font-size: 14px;
+         background: transparent;
+         color: var(--text-color);
+     }
+
+     .panel-comment-submit {
+         background: none;
+         border: none;
+         color: #0095f6;
+         font-weight: bold;
+         font-size: 14px;
+         cursor: pointer;
+         margin-left: 10px;
+     }
+
+     .no-comments {
+         text-align: center;
+         color: var(--text-secondary);
+         font-size: 14px;
+         padding-top: 30px;
+     }
+
+     .no-posts {
+         text-align: center;
+         padding: 40px;
+         color: var(--text-secondary);
+         font-size: 14px;
+     }
+
+     /* 1. Post Card တစ်ခုစီရဲ့ Margin အကွာအဝေးနှင့် Border သတ်မှတ်ခြင်း */
+     /* Light Theme - မူလ Post Card ပုံစံ */
+     .post-card {
+         background-color: #ffffff;
+         border: 1px solid #dbdbdb;
+         border-radius: 8px;
+         margin-bottom: 24px;
+         overflow: hidden;
+     }
+
+     .post-image-box {
+         width: 100%;
+         max-height: 500px;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         overflow: hidden;
+     }
+
+     .post-image {
+         width: 100%;
+         height: 100%;
+         max-height: 500px;
+         object-fit: cover;
+     }
+
+     /* ==========================================
+Dark Mode CSS (မလွတ်ရအောင် အကုန်ဖမ်းထားသည်)
+========================================== */
+
+     /* 1. Post Card ရဲ့ Background ကို အမဲရောင် သို့ ပြောင်းမည် */
+     [data-theme="dark"] .post-card,
+     body.dark .post-card,
+     .dark .post-card {
+         background-color: #242526 !important;
+         border-color: #393a3b !important;
+     }
+
+     /* 2. Post Card ထဲက စာသား/Username/Caption မှန်သမျှ အဖြူရောင် ပြောင်းမည် */
+     [data-theme="dark"] .post-card *,
+     [data-theme="dark"] .post-card span,
+     [data-theme="dark"] .post-card div,
+     [data-theme="dark"] .post-card a,
+     [data-theme="dark"] .post-caption,
+     [data-theme="dark"] .username,
+     [data-theme="dark"] .post-time-top,
+     [data-theme="dark"] .likes-count-display,
+     [data-theme="dark"] .comments-count-display,
+     [data-theme="dark"] .action-button,
+     [data-theme="dark"] .like-text,
+     body.dark .post-card *,
+     .dark .post-card * {
+         color: #e4e6eb !important;
+     }
+
+     /* 3. Border လိုင်းများ အမဲရောင်ပြောင်းရန် */
+     [data-theme="dark"] .action-bar,
+     [data-theme="dark"] .counts-row,
+     [data-theme="dark"] .post-header,
+     body.dark .action-bar,
+     .dark .action-bar {
+         border-color: #393a3b !important;
+     }
