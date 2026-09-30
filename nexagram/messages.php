@@ -29,13 +29,13 @@ $active_user_id = isset($_GET['user_id']) ? (int)$_GET['user_id'] : 0;
 
     <!-- 1. Left Navigation Sidebar -->
     <nav class="sidebar">
-        <div class="logo">Nexagram</div>
+        <a href="index.php" class="logo" aria-label="Nexagram - ホーム">Nexagram</a>
         <ul class="nav-menu">
-            <li class="nav-item"><a href="index.php">🏠 <span>ホーム (Home)</span></a></li>
-            <li class="nav-item"><a href="explore.php">🔍 <span>検索 (Search)</span></a></li>
-            <li class="nav-item active"><strong><a href="messages.php">✉️ <span>メッセージ (Messages)</span></a></strong></li>
-            <li class="nav-item"><a href="create_post.php">➕ <span>作成 (Create Post)</span></a></li>
-            <li class="nav-item"><a href="profile.php">👤 <span>プロフィール (Profile)</span></a></li>
+            <li class="nav-item"><a href="index.php">🏠 <span>ホーム</span></a></li>
+            <li class="nav-item"><a href="explore.php">🔍 <span>検索</span></a></li>
+            <li class="nav-item active"><strong><a href="messages.php">✉️ <span>メッセージ</span></a></strong></li>
+            <li class="nav-item"><a href="create_post.php">➕ <span>作成</span></a></li>
+            <li class="nav-item"><a href="profile.php">👤 <span>プロフィール</span></a></li>
 
             <li class="nav-item theme-toggle-btn" id="theme-toggle" style="margin-top: auto;">
                 <span id="theme-icon">🌙</span> <span id="theme-text">ダークモード</span>

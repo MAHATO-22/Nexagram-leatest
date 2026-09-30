@@ -32,6 +32,8 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 10px;
+    text-decoration: none;
+    display: inline-block;
 }
 
 .subtitle {
@@ -60,6 +62,17 @@ body {
     border-color: #a8a8a8;
 }
 
+/* The offending field is outlined so the user can see which input to fix. */
+.input-group.has-error input {
+    border-color: #c92626;
+    background: #fdf2f2;
+}
+
+.input-group.has-error input:focus {
+    border-color: #c92626;
+    box-shadow: 0 0 0 1px #c92626;
+}
+
 .btn-submit {
     width: 100%;
     background-color: #0095f6;
@@ -81,6 +94,19 @@ body {
     margin-top: 25px;
     font-size: 14px;
     color: #262626;
+}
+
+.error-list {
+    list-style: none;
+    margin-bottom: 16px;
+    padding: 10px 12px;
+    background: #fdf2f2;
+    border: 1px solid #f0b3b3;
+    border-radius: 4px;
+    color: #c92626;
+    font-size: 12px;
+    line-height: 1.6;
+    text-align: left;
 }
 
 .footer-text a {

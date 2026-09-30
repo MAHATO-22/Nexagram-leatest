@@ -20,13 +20,13 @@ if (!isset($_SESSION['user_id'])) {
 
     <!-- Left Sidebar Navigation -->
     <nav class="sidebar">
-        <div class="logo">Nexagram</div>
+        <a href="index.php" class="logo" aria-label="Nexagram - ホーム">Nexagram</a>
         <ul class="nav-menu">
-            <li class="nav-item"><a href="index.php">🏠 ホーム (Home)</a></li>
-            <li class="nav-item"><a href="explore.php">🔍 検索 (Search)</a></li>
-            <li class="nav-item"><a href="messages.php">✉️ メッセージ (Messages)</a></li>
-            <li class="nav-item"><strong><a href="create_post.php">➕ 作成 (Create Post)</a></strong></li>
-            <li class="nav-item"><a href="profile.php">👤 プロフィール (Profile)</a></li>
+            <li class="nav-item"><a href="index.php">🏠 ホーム</a></li>
+            <li class="nav-item"><a href="explore.php">🔍 検索</a></li>
+            <li class="nav-item"><a href="messages.php">✉️ メッセージ</a></li>
+            <li class="nav-item"><strong><a href="create_post.php">➕ 作成</a></strong></li>
+            <li class="nav-item"><a href="profile.php">👤 プロフィール</a></li>
             <li class="nav-item logout-btn"><a href="php/logout.php" style="color: #ed4956;">🚪 ログアウト</a></li>
         </ul>
     </nav>

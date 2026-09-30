@@ -87,13 +87,13 @@ try {
 
     <!-- Left Sidebar Navigation -->
     <nav class="sidebar">
-        <div class="logo">Nexagram</div>
+        <a href="index.php" class="logo" aria-label="Nexagram - ホーム">Nexagram</a>
         <ul class="nav-menu">
-            <li class="nav-item"><a href="index.php">🏠 ホーム (Home)</a></li>
-            <li class="nav-item" style="background-color: var(--sidebar-hover);"><strong><a href="explore.php">🔍 検索 (Search)</a></strong></li>
-            <li class="nav-item"><a href="messages.php">✉️ メッセージ (Messages)</a></li>
-            <li class="nav-item"><a href="create_post.php">➕ 作成 (Create Post)</a></li>
-            <li class="nav-item"><a href="profile.php">👤 プロフィール (Profile)</a></li>
+            <li class="nav-item"><a href="index.php">🏠 ホーム</a></li>
+            <li class="nav-item" style="background-color: var(--sidebar-hover);"><strong><a href="explore.php">🔍 検索</a></strong></li>
+            <li class="nav-item"><a href="messages.php">✉️ メッセージ</a></li>
+            <li class="nav-item"><a href="create_post.php">➕ 作成</a></li>
+            <li class="nav-item"><a href="profile.php">👤 プロフィール </a></li>
 
             <li class="nav-item theme-toggle-btn" id="theme-toggle" style="margin-top: auto;">
                 <span id="theme-icon">🌙</span> <span id="theme-text">ダークモード</span>

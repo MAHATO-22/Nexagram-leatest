@@ -68,7 +68,7 @@ if (!$is_own_profile) {
    <!-- Navigation Sidebar -->
 <div class="sidebar">
     <div>
-        <h3>Nexagram</h3>
+        <a href="index.php" class="logo" aria-label="Nexagram - Home">Nexagram</a>
         <div class="nav-menu">
             <a href="index.php" class="nav-item">
                 <span>🏠</span> ホーム

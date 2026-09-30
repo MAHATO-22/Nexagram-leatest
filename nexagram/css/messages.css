@@ -76,6 +76,8 @@ body {
     background-clip: text;
     margin-bottom: 35px;
     padding-left: 12px;
+    text-decoration: none;
+    display: inline-block;
 }
 
 .nav-menu {

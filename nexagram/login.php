@@ -9,7 +9,7 @@
 <body>
 
 <div class="container">
-    <div class="logo">Nexagram</div>
+    <a href="index.php" class="logo" aria-label="Nexagram - Home">Nexagram</a>
     
     <!-- データを php/login_process.php に送信します -->
     <form action="php/login_process.php" method="POST">

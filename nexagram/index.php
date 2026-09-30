@@ -72,7 +72,7 @@ try {
 <body>
 
     <nav class="sidebar">
-        <div class="logo">Nexagram</div>
+        <a href="index.php" class="logo" aria-label="Nexagram - ホーム">Nexagram</a>
         <ul class="nav-menu">
             <li class="nav-item" style="background-color: var(--sidebar-hover);"><strong><a href="index.php">🏠 ホーム</a></strong></li>
             <li class="nav-item"><a href="explore.php">🔍 検索 </a></li>
