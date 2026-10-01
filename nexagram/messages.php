@@ -100,6 +100,22 @@ $active_user_id = isset($_GET['user_id']) ? (int)$_GET['user_id'] : 0;
                             <button class="emoji-btn" onclick="insertEmoji('🔥')">🔥</button>
                             <button class="emoji-btn" onclick="insertEmoji('🎉')">🎉</button>
                             <button class="emoji-btn" onclick="insertEmoji('😍')">😍</button>
+                            <button class="emoji-btn" onclick="insertEmoji('🥰')">🥰</button>
+                            <button class="emoji-btn" onclick="insertEmoji('😊')">😊</button>
+                            <button class="emoji-btn" onclick="insertEmoji('😘')">😘</button>
+                            <button class="emoji-btn" onclick="insertEmoji('🤣')">🤣</button>
+                            <button class="emoji-btn" onclick="insertEmoji('😅')">😅</button>
+                            <button class="emoji-btn" onclick="insertEmoji('😭')">😭</button>
+                            <button class="emoji-btn" onclick="insertEmoji('🤔')">🤔</button>
+                            <button class="emoji-btn" onclick="insertEmoji('👏')">👏</button>
+                            <button class="emoji-btn" onclick="insertEmoji('💯')">💯</button>
+                            <button class="emoji-btn" onclick="insertEmoji('🙏')">🙏</button>
+                            <button class="emoji-btn" onclick="insertEmoji('✨')">✨</button>
+                            <button class="emoji-btn" onclick="insertEmoji('🫶')">🫶</button>
+                            <button class="emoji-btn" onclick="insertEmoji('🥳')">🥳</button>
+                            <button class="emoji-btn" onclick="insertEmoji('😎')">😎</button>
+                            <button class="emoji-btn" onclick="insertEmoji('😴')">😴</button>
+                            <button class="emoji-btn" onclick="insertEmoji('💔')">💔</button>
                         </div>
                         <form class="input-form" id="chat-message-form" onsubmit="handleSendMessage(event)">
                             <input type="text" id="chat-message-input" placeholder="メッセージを入力... (Type a message...)" autocomplete="off">
@@ -283,6 +299,22 @@ $active_user_id = isset($_GET['user_id']) ? (int)$_GET['user_id'] : 0;
                                 <button class="emoji-btn" onclick="insertEmoji('🔥')">🔥</button>
                                 <button class="emoji-btn" onclick="insertEmoji('🎉')">🎉</button>
                                 <button class="emoji-btn" onclick="insertEmoji('😍')">😍</button>
+                                <button class="emoji-btn" onclick="insertEmoji('🥰')">🥰</button>
+                                <button class="emoji-btn" onclick="insertEmoji('😊')">😊</button>
+                                <button class="emoji-btn" onclick="insertEmoji('😘')">😘</button>
+                                <button class="emoji-btn" onclick="insertEmoji('🤣')">🤣</button>
+                                <button class="emoji-btn" onclick="insertEmoji('😅')">😅</button>
+                                <button class="emoji-btn" onclick="insertEmoji('😭')">😭</button>
+                                <button class="emoji-btn" onclick="insertEmoji('🤔')">🤔</button>
+                                <button class="emoji-btn" onclick="insertEmoji('👏')">👏</button>
+                                <button class="emoji-btn" onclick="insertEmoji('💯')">💯</button>
+                                <button class="emoji-btn" onclick="insertEmoji('🙏')">🙏</button>
+                                <button class="emoji-btn" onclick="insertEmoji('✨')">✨</button>
+                                <button class="emoji-btn" onclick="insertEmoji('🫶')">🫶</button>
+                                <button class="emoji-btn" onclick="insertEmoji('🥳')">🥳</button>
+                                <button class="emoji-btn" onclick="insertEmoji('😎')">😎</button>
+                                <button class="emoji-btn" onclick="insertEmoji('😴')">😴</button>
+                                <button class="emoji-btn" onclick="insertEmoji('💔')">💔</button>
                             </div>
                             <form class="input-form" id="chat-message-form" onsubmit="handleSendMessage(event)">
                                 <input type="text" id="chat-message-input" placeholder="メッセージを入力... (Type a message...)" autocomplete="off">

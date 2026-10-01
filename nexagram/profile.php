@@ -220,6 +220,30 @@ if (!$is_own_profile) {
                     <div class="post-date" id="modalDate"></div>
 
                     <div class="add-comment-box">
+                        <div class="quick-emoji-bar">
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('❤️')">❤️</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('😂')">😂</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('👍')">👍</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('🔥')">🔥</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('🎉')">🎉</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('😍')">😍</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('🥰')">🥰</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('😊')">😊</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('😘')">😘</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('🤣')">🤣</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('😅')">😅</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('😭')">😭</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('🤔')">🤔</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('👏')">👏</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('💯')">💯</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('🙏')">🙏</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('✨')">✨</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('🫶')">🫶</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('🥳')">🥳</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('😎')">😎</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('😴')">😴</button>
+                            <button type="button" class="emoji-btn" onclick="insertCommentEmoji('💔')">💔</button>
+                        </div>
                         <input type="text" id="commentInput" placeholder="Add a comment..." onkeypress="handleCommentKeyPress(event)">
                         <button class="post-btn" onclick="submitComment()">Post</button>
                     </div>
@@ -315,6 +339,14 @@ if (!$is_own_profile) {
 
         function focusComment() {
             document.getElementById('commentInput').focus();
+        }
+
+        function insertCommentEmoji(emoji) {
+            const input = document.getElementById('commentInput');
+            if (input) {
+                input.value += emoji;
+                input.focus();
+            }
         }
 
         function handleCommentKeyPress(e) {

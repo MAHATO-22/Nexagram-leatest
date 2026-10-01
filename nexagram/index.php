@@ -216,6 +216,30 @@ try {
         </div>
 
         <div class="sheet-footer">
+            <div class="quick-emoji-bar">
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('❤️')">❤️</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('😂')">😂</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('👍')">👍</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('🔥')">🔥</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('🎉')">🎉</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('😍')">😍</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('🥰')">🥰</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('😊')">😊</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('😘')">😘</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('🤣')">🤣</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('😅')">😅</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('😭')">😭</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('🤔')">🤔</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('👏')">👏</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('💯')">💯</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('🙏')">🙏</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('✨')">✨</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('🫶')">🫶</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('🥳')">🥳</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('😎')">😎</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('😴')">😴</button>
+                <button type="button" class="emoji-btn" onclick="insertCommentEmoji('💔')">💔</button>
+            </div>
             <form action="php/comment_process.php" method="POST" class="panel-comment-form">
                 <input type="hidden" name="post_id" id="sheetPostId">
                 <input type="text" name="comment_text" class="panel-comment-input" placeholder="コメントを追加..." required>
@@ -281,6 +305,14 @@ try {
             sheet.classList.remove('active');
             document.body.style.overflow = '';
             setTimeout(() => overlay.style.display = 'none', 300);
+        }
+
+        function insertCommentEmoji(emoji) {
+            const input = document.querySelector('.panel-comment-input');
+            if (input) {
+                input.value += emoji;
+                input.focus();
+            }
         }
 
         const themeToggleBtn = document.getElementById("theme-toggle");
